@@ -1,6 +1,8 @@
 local player = game.Players.LocalPlayer
 local sg = player:WaitForChild("PlayerGui")
 local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local VIM = game:GetService("VirtualInputManager")
 
 if sg:FindFirstChild("RemovedGuardsGui") then
     StarterGui:SetCore("SendNotification", {
@@ -18,7 +20,7 @@ gui.ResetOnSpawn = false
 gui.Parent = sg
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 180, 0, 74)
+mainFrame.Size = UDim2.new(0, 180, 0, 235)
 mainFrame.Position = UDim2.new(0.5, -90, 0.12, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
 mainFrame.BackgroundTransparency = 0
@@ -83,6 +85,118 @@ local btnCorner = Instance.new("UICorner")
 btnCorner.CornerRadius = UDim.new(0, 6)
 btnCorner.Parent = actionButton
 
+local finderLabel = Instance.new("TextLabel")
+finderLabel.Size = UDim2.new(0.92, 0, 0, 18)
+finderLabel.Position = UDim2.new(0.04, 0, 0, 82)
+finderLabel.BackgroundTransparency = 1
+finderLabel.Text = "Brainrots Finder"
+finderLabel.TextColor3 = Color3.fromRGB(160, 160, 180)
+finderLabel.TextSize = 13
+finderLabel.Font = Enum.Font.SourceSansSemibold
+finderLabel.TextXAlignment = Enum.TextXAlignment.Left
+finderLabel.Parent = mainFrame
+
+local brainrotInput = Instance.new("TextBox")
+brainrotInput.Size = UDim2.new(0.92, 0, 0, 32)
+brainrotInput.Position = UDim2.new(0.04, 0, 0, 105)
+brainrotInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+brainrotInput.BackgroundTransparency = 0
+brainrotInput.BorderSizePixel = 0
+brainrotInput.Text = "Insert Brainrot First Name"
+brainrotInput.TextColor3 = Color3.fromRGB(140, 140, 150)
+brainrotInput.TextSize = 13
+brainrotInput.Font = Enum.Font.SourceSans
+brainrotInput.ClearTextOnFocus = true
+brainrotInput.Parent = mainFrame
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 5)
+inputCorner.Parent = brainrotInput
+
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Color = Color3.fromRGB(80, 80, 95)
+inputStroke.Thickness = 1
+inputStroke.Transparency = 0.4
+inputStroke.Parent = brainrotInput
+
+brainrotInput.Focused:Connect(function()
+    if brainrotInput.Text == "Insert Brainrot First Name" then
+        brainrotInput.Text = ""
+        brainrotInput.TextColor3 = Color3.fromRGB(220, 220, 230)
+    end
+end)
+
+brainrotInput.FocusLost:Connect(function()
+    if brainrotInput.Text == "" then
+        brainrotInput.Text = "Insert Brainrot First Name"
+        brainrotInput.TextColor3 = Color3.fromRGB(140, 140, 150)
+    end
+end)
+
+local autoGetButton = Instance.new("TextButton")
+autoGetButton.Size = UDim2.new(0.92, 0, 0, 36)
+autoGetButton.Position = UDim2.new(0.04, 0, 0, 145)
+autoGetButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+autoGetButton.BackgroundTransparency = 0
+autoGetButton.BorderSizePixel = 0
+autoGetButton.Text = "Auto Get Entered Brainrot"
+autoGetButton.TextColor3 = Color3.fromRGB(220, 220, 230)
+autoGetButton.TextSize = 14
+autoGetButton.Font = Enum.Font.SourceSansSemibold
+autoGetButton.Parent = mainFrame
+
+local autoCorner = Instance.new("UICorner")
+autoCorner.CornerRadius = UDim.new(0, 6)
+autoCorner.Parent = autoGetButton
+
+local autoEnabled = false
+
+local function updateAutoGetVisual()
+    if autoEnabled then
+        autoGetButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+        autoGetButton.BackgroundTransparency = 0.1
+    else
+        autoGetButton.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+        autoGetButton.BackgroundTransparency = 0
+    end
+end
+
+autoGetButton.MouseButton1Click:Connect(function()
+    autoEnabled = not autoEnabled
+    updateAutoGetVisual()
+end)
+
+updateAutoGetVisual()
+
+-- Discord TextButton (in extra space at bottom)
+local discordButton = Instance.new("TextButton")
+discordButton.Size = UDim2.new(0.92, 0, 0, 30)
+discordButton.Position = UDim2.new(0.04, 0, 1, -45)
+discordButton.BackgroundTransparency = 1
+discordButton.Text = "Discord"
+discordButton.TextColor3 = Color3.fromRGB(100, 180, 255)
+discordButton.TextSize = 16
+discordButton.Font = Enum.Font.SourceSansBold
+discordButton.Parent = mainFrame
+
+discordButton.MouseButton1Click:Connect(function()
+    setclipboard("https://discord.gg/znnJwS8Fsq")
+    StarterGui:SetCore("SendNotification", {
+        Title = "Copied!",
+        Text = "Discord link copied to clipboard",
+        Duration = 3
+    })
+end)
+
+-- Hover effect (optional, subtle color change)
+discordButton.MouseEnter:Connect(function()
+    discordButton.TextColor3 = Color3.fromRGB(150, 220, 255)
+end)
+
+discordButton.MouseLeave:Connect(function()
+    discordButton.TextColor3 = Color3.fromRGB(100, 180, 255)
+end)
+
 local UIS = game:GetService("UserInputService")
 local dragging, dragStart, startPos
 
@@ -112,12 +226,20 @@ local expanded = true
 toggleCollapse.MouseButton1Click:Connect(function()
     expanded = not expanded
     if expanded then
-        mainFrame.Size = UDim2.new(0, 180, 0, 74)
+        mainFrame.Size = UDim2.new(0, 180, 0, 235)
         actionButton.Visible = true
+        finderLabel.Visible = true
+        brainrotInput.Visible = true
+        autoGetButton.Visible = true
+        discordButton.Visible = true
         toggleCollapse.Text = "–"
     else
         mainFrame.Size = UDim2.new(0, 180, 0, 28)
         actionButton.Visible = false
+        finderLabel.Visible = false
+        brainrotInput.Visible = false
+        autoGetButton.Visible = false
+        discordButton.Visible = false
         toggleCollapse.Text = "+"
     end
 end)
@@ -166,6 +288,100 @@ player.Chatted:Connect(function(msg)
     if msg:lower() == "/e destroy" then
         if gui and gui.Parent then
             gui:Destroy()
+        end
+    end
+end)
+
+local function triggerEHold(duration)
+    VIM:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(duration)
+    VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end
+
+local function normalizeName(str)
+    return string.lower(string.gsub(str, "%s+", ""))
+end
+
+local function findBrainrotModels(targetName)
+    local models = {}
+    local normTarget = normalizeName(targetName)
+    
+    if normTarget == "" or normTarget == normalizeName("Insert Brainrot First Name") then
+        return models
+    end
+    
+    local basesFolder = workspace:FindFirstChild("Brainrot Bases")
+    if not basesFolder then return models end
+    
+    for i = 1, 6 do
+        local base = basesFolder:FindFirstChild("Base " .. i)
+        if base then
+            local spawnpoints = base:FindFirstChild("Spawnpoints")
+            if spawnpoints then
+                for j = 1, 10 do
+                    local part = spawnpoints:FindFirstChild(tostring(j))
+                    if part then
+                        for _, child in ipairs(part:GetChildren()) do
+                            if child:IsA("Model") then
+                                local normName = normalizeName(child.Name)
+                                if string.find(normName, normTarget, 1, true) then
+                                    table.insert(models, child)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return models
+end
+
+spawn(function()
+    while true do
+        task.wait(0.4)
+        if not autoEnabled then continue end
+        
+        local char = player.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+        local root = char.HumanoidRootPart
+        
+        local inputText = brainrotInput.Text
+        if inputText == "" or inputText == "Insert Brainrot First Name" then continue end
+        
+        local foundModels = findBrainrotModels(inputText)
+        if #foundModels == 0 then continue end
+        
+        for _, model in ipairs(foundModels) do
+            if not autoEnabled then break end
+            
+            local targetCFrame = model.PrimaryPart and model.PrimaryPart.CFrame or model:GetPivot()
+            root.CFrame = targetCFrame + Vector3.new(0, 3, 0)
+            
+            task.wait(0.1)
+            
+            triggerEHold(0.3)
+            
+            task.wait(0.6)
+            
+            root.CFrame = CFrame.new(Vector3.new(391.9, 4.9, -70.0))
+            
+            task.wait(3.5)
+        end
+    end
+end)
+
+spawn(function()
+    while true do
+        task.wait(0.5)
+        if autoEnabled then
+            for _, prompt in ipairs(workspace:GetDescendants()) do
+                if prompt:IsA("ProximityPrompt") then
+                    prompt.HoldDuration = 0
+                    prompt.RequiresLineOfSight = false
+                    prompt.MaxActivationDistance = 20
+                end
+            end
         end
     end
 end)
